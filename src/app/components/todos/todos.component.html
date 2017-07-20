@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+</head>
+
+<body>
+    <div class="add-todo-form">
+        <div class="form-group row">
+            <h1 class="col-sm-5">Add Todos</h1>
+            <button type="button" class="btn btn-danger btn-sm col-sm-5 push-sm-2 pull-right" (click)="logout()">Log out</button>
+        </div>
+        <div class="form-group mt-4">
+            <form class="form-group" #f="ngForm" (ngSubmit)="addTodo($event, f)">
+                <input required name="create" ngModel #create="ngModel" type="text" class="form-control input-lg" placeholder="Add todo..."
+                    autofocus>
+                <br>
+                <button type="submit" [disabled]="!f.valid" class="btn btn-primary btn-block">Create</button>
+            </form>
+        </div>
+    </div>
+    <div class="todo-list">
+        <div *ngIf="isLoading" class="text-center">
+            <i class="fa fa-spinner fa-spin fa-3x" aria-hidden="true"></i>
+        </div>
+        <div *ngFor="let todo of todos" class="row">
+            <div class="col-sm-1">
+                <input type="checkbox" [checked]="todo.completed" (click)="updateStatus(todo)">
+            </div>
+            <div class="col-sm-7">
+                <span [hidden]="todo.isEditMode">{{todo.text}}</span>
+                <input type="text" [hidden]="!todo.isEditMode" [value]="todo.text" (keypress)="updateTodoText($event,todo)">
+                <input type="button" [hidden]="!todo.isEditMode" value="Cancel" (click)="setEditState(todo,false)" class="btn btn-warning">
+            </div>
+            <div class="col-sm-4">
+                <input type="button" class="btn btn-danger pull-right ml-1" (click)="deleteTodo(todo)" value="Delete">
+                <input [disabled]="todo.completed" (click)="setEditState(todo,true)" type="button" class="btn btn-default pull-right" value="Edit">
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
