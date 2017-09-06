@@ -9,12 +9,19 @@
 </head>
 
 <body>
-    <div class="add-todo-form">
-        <div class="form-group row">
-            <h1 class="col-sm-5">Add Todos</h1>
-            <button type="button" class="btn btn-danger btn-sm col-sm-5 push-sm-2 pull-right" (click)="logout()">Log out</button>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-8 col-md-10 col-lg-10">
+                <h1 class="mt-2">Add Todos</h1>
+            </div>
+            <div class="col-xs-12 col-sm-4 col-md-2 col-lg-2">
+                <button type="button" class="btn btn-danger mt-2" (click)="logout()">Log out</button>
+            </div>
         </div>
-        <div class="form-group mt-4">
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12 col-md-12 col-lg-12 col-xl-12">
             <form class="form-group" #f="ngForm" (ngSubmit)="addTodo($event, f)">
                 <input required name="create" ngModel #create="ngModel" type="text" class="form-control input-lg" placeholder="Add todo..."
                     autofocus>
@@ -23,7 +30,8 @@
             </form>
         </div>
     </div>
-    <div class="todo-list">
+
+    <div>
         <div *ngIf="isLoading" class="text-center">
             <i class="fa fa-spinner fa-spin fa-3x" aria-hidden="true"></i>
         </div>
