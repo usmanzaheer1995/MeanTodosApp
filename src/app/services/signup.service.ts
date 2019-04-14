@@ -1,36 +1,32 @@
-import { Injectable } from '@angular/core';
-import { Http, Headers } from '@angular/http';
-import { Observable } from 'rxjs';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/toPromise';
-import 'rxjs/add/operator/catch';
+import { Injectable } from "@angular/core";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { of, Observable, throwError } from "rxjs";
+import { catchError, switchMap } from "rxjs/operators";
 
 @Injectable()
 export class SignupService {
-  constructor(private _http: Http) {}
+  constructor(private _http: HttpClient) {}
 
-  async signupUser(user) {
+  signupUser(user): Observable<any> {
     let email = user.email;
-    let headers = new Headers();
-    headers.append('Content-type', 'application/json');
-    let abc = await this._http
-      .post('routes/findusers', JSON.stringify({ email }), { headers: headers })
-      .toPromise()
-      .catch((err: Response) => {
-        if (err.status != 200) {
-          return null;
-        }
-      });
-    if (abc !== null) {
-      let signup = await this._http
-        .post('routes/users', user)
-        .toPromise()
-        .catch((err: Response) => {
-          if (err.status != 200) {
-            return null;
+    let headers = new HttpHeaders();
+    headers.append("Content-type", "application/json");
+    return this._http
+      .post("routes/findusers", JSON.stringify({ email }), { headers: headers })
+      .pipe(
+        switchMap(res => {
+          if (!res) {
+            return this._http.post("routes/users", user);
+          } else {
+            return throwError("User Already Exists");
           }
-        });
-      if (signup !== null) return signup.json();
-    }
+        }),
+        catchError((err: Response) => {
+          if (err.status != 200) {
+            return throwError(err);
+          }
+          return throwError(err);
+        })
+      );
   }
 }

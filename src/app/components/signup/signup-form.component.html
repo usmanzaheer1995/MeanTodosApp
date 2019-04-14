@@ -1,64 +1,78 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <title></title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+<body>
+  <form [formGroup]="myForm" (ngSubmit)="signup()">
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input
+        type="text"
+        name="email"
+        class="form-control"
+        formControlName="email"
+        autocomplete="false"
+        email="true"
+      />
+      <div *ngIf="getemail().pending">
+        Checking for uniqueness...
+      </div>
 
-    </head>
-    <body>
-        <form [formGroup]="myForm" (ngSubmit)="signup()">
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input 
-                    type="text" 
-                    name="email" 
-                    class="form-control" 
-                    formControlName="email"
-                    autocomplete="false"
-                    email="true"
-                >
-                <div *ngIf="getemail().pending">
-                    Checking for uniqueness...
-                </div>
+      <div *ngIf="getemail().touched && getemail().errors">
+        <div class="alert alert-danger" *ngIf="getemail().hasError('required')">
+          email is required.
+        </div>
+        <div
+          class="alert alert-danger"
+          *ngIf="getemail().hasError('minlength')"
+        >
+          email must have atleast
+          {{ getemail().errors.minlength.requiredLength }} characters.
+        </div>
+        <div
+          *ngIf="getemail().hasError('shouldBeUnique')"
+          class="alert alert-danger"
+        >
+          This email is already taken.
+        </div>
+      </div>
+    </div>
 
-                <div *ngIf="getemail().touched && getemail().errors">
-                    <div class="alert alert-danger" *ngIf="getemail().hasError('required')">
-                        email is required.
-                    </div>
-                    <div class="alert alert-danger" *ngIf="getemail().hasError('minlength')">
-                        email must have atleast {{getemail().errors.minlength.requiredLength}} characters.
-                    </div>
-                    <div *ngIf="getemail().hasError('shouldBeUnique')" class="alert alert-danger">
-                        This email is already taken.
-                    </div>
-                </div>
-                
-            </div>
+    <div class="form-group">
+      <label for="password">password</label>
+      <input
+        type="password"
+        name="password"
+        class="form-control"
+        formControlName="password"
+        hello
+      />
+      <div *ngIf="getPassword().pending">
+        Checking for uniqueness...
+      </div>
+      <div *ngIf="getPassword().touched && getPassword().errors">
+        <div
+          class="alert alert-danger"
+          *ngIf="getPassword().hasError('required')"
+        >
+          Password is required.
+        </div>
+        <div
+          *ngIf="getPassword().hasError('minlength')"
+          class="alert alert-danger"
+        >
+          Password should be atleast
+          {{ getPassword().errors.minlength.requiredLength }} characters.
+        </div>
+      </div>
+    </div>
 
-            <div class="form-group">
-                <label for="password">password</label>
-                <input 
-                    type="password" 
-                    name="password" 
-                    class="form-control"
-                    formControlName="password"
-                    hello
-                >
-                <div *ngIf="getPassword().pending">
-                    Checking for uniqueness...
-                </div>
-                <div *ngIf="getPassword().touched && getPassword().errors">
-                    <div class="alert alert-danger" *ngIf="getPassword().hasError('required')">
-                        Password is required.
-                    </div>
-                   <div *ngIf="getPassword().hasError('minlength')" class="alert alert-danger">
-                        Password should be atleast {{getPassword().errors.minlength.requiredLength}} characters.
-                    </div>
-                </div>
-            </div>
+    <button
+      type="sumbit"
+      class="btn btn-primary text-center"
+      [disabled]="!myForm.valid"
+    >
+      Sign up
+    </button>
 
-            <button type="sumbit" class="btn btn-primary text-center" [disabled]="!myForm.valid">Sign up</button>
-        </form>
-    </body>
-</html>
+    <a type="button" class="btn btn-danger text-center" [routerLink]="['']"
+      >Back to Login</a
+    >
+  </form>
+</body>

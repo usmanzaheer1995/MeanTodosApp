@@ -1,13 +1,13 @@
-import { Injectable } from '@angular/core';
-import { CanDeactivate } from '@angular/router';
-import { Observable } from 'rxjs/Observable';
+import { Injectable } from "@angular/core";
+import { CanDeactivate } from "@angular/router";
+import { Observable } from "rxjs";
 import {
   ActivatedRouteSnapshot,
   RouterStateSnapshot,
   Router
-} from '@angular/router';
+} from "@angular/router";
 
-import { TodosComponent } from './../components/todos/todos.component';
+import { TodosComponent } from "./../components/todos/todos.component";
 
 export interface CanComponentDeactivate {
   canDeactivate: () => Observable<boolean> | Promise<boolean> | boolean;

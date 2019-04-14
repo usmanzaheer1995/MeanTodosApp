@@ -1,31 +1,31 @@
-import {Injectable} from "@angular/core"
-import {Http, Headers} from "@angular/http"
-import {Observable} from "rxjs"
-import "rxjs/add/operator/map"
-import "rxjs/add/operator/toPromise"
-import 'rxjs/add/operator/catch'
+import { Injectable } from "@angular/core";
+import { HttpClient, HttpHeaders, HttpResponse } from "@angular/common/http";
+import { tap, map, catchError } from "rxjs/operators";
+import { Observable, of } from "rxjs";
 
 @Injectable()
 export class LoginService {
-    constructor(private _http: Http) {
+  constructor(private _http: HttpClient) {}
 
-    }
-
-    async getUser(user) {
-        let headers = new Headers()
-        headers.append('Content-type', 'application/json')
-        let abc = await this._http.post('routes/users/login', JSON.stringify(user), {headers: headers})
-            .toPromise()
-            .catch((err:Response) => {
-                if(err.status!=200){
-                    return null
-                }
-            })
-        if(abc === null ){
-            return null
-        }
-        // console.log(abc.headers.get('x-auth'))
-        localStorage.setItem('x-auth', abc.headers.get('x-auth'))
-        return abc.json()
-    }
+  getUser(user): Observable<HttpResponse<Object>> {
+    let headers = new HttpHeaders();
+    headers.append("Content-type", "application/json");
+    return this._http
+      .post<HttpResponse<Object>>(
+        "routes/users/login",
+        { user },
+        { headers, observe: "response" }
+      )
+      .pipe(
+        tap(res => {
+          localStorage.setItem("x-auth", res.headers.get("x-auth"));
+        }),
+        map(res => {
+          return res.body;
+        }),
+        catchError(err => {
+          return of(err);
+        })
+      );
+  }
 }

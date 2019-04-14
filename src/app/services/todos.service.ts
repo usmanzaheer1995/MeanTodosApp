@@ -1,93 +1,76 @@
-import { Injectable } from '@angular/core';
-import { Http, Headers } from '@angular/http';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/toPromise';
+import { Injectable } from "@angular/core";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { Observable } from "rxjs";
+import { tap } from "rxjs/operators";
+import { LoaderService } from "./loader.service";
 
 @Injectable()
 export class TodosService {
-  constructor(private _http: Http) {}
+  constructor(
+    private _http: HttpClient,
+    private _loaderService: LoaderService
+  ) {}
 
-  async getTodos(user) {
-    let headers = new Headers();
-    headers.append('Content-type', 'application/json');
-    headers.append('x-auth', localStorage.getItem('x-auth'));
-    //console.log(headers)
-    try {
-      let todo = await this._http
-        .post('routes/todos', user, { headers })
-        .toPromise();
-      return todo.json();
-    } catch (error) {
-      if (error.status === 401) {
-        return error.status;
-      }
-    }
+  getTodos(user) {
+    const headers = {
+      "Content-type": "application/json",
+      "x-auth": localStorage.getItem("x-auth")
+    };
+    this._loaderService.isLoading(true);
+    return this._http.post("routes/todos", { ...user }, { headers });
   }
 
-  async saveTodo(newTodo, user) {
-    //console.log(newTodo)
-    //console.log(user)
-    let headers = new Headers();
-    headers.append('Content-type', 'application/json');
-    headers.append('x-auth', localStorage.getItem('x-auth'));
-    try {
-      let todo = await this._http
-        .post('routes/savetodos', JSON.stringify({ newTodo, user }), {
-          headers: headers
+  saveTodo(newTodo, user): Observable<any> {
+    const headers = {
+      "Content-type": "application/json",
+      "x-auth": localStorage.getItem("x-auth")
+    };
+    return this._http.post("routes/savetodos", { newTodo, user }, { headers });
+  }
+
+  updateTodo(newTodo): Observable<any> {
+    const headers = {
+      "Content-type": "application/json",
+      "x-auth": localStorage.getItem("x-auth")
+    };
+    return this._http.post(
+      `routes/updatetodos/${newTodo._id}`,
+      { newTodo },
+      { headers }
+    );
+  }
+
+  deleteTodo(todo, user): Observable<any> {
+    const headers = {
+      "Content-type": "application/json",
+      "x-auth": localStorage.getItem("x-auth")
+    };
+    return this._http.post(
+      `routes/deletetodos/${todo._id}`,
+      { user, todo },
+      { headers }
+    );
+  }
+
+  logout(user) {
+    const headers = {
+      "Content-type": "application/json",
+      "x-auth": localStorage.getItem("x-auth")
+    };
+    return this._http
+      .post(
+        `routes/users/delete/token`,
+        { ...user },
+        {
+          headers
+        }
+      )
+      .pipe(
+        tap(() => {
+          localStorage.removeItem("x-auth");
+          localStorage.removeItem("_id");
+          localStorage.removeItem("email");
         })
-        .toPromise();
-      return todo.json();
-    } catch (error) {
-      return null;
-    }
-  }
-
-  async updateTodo(newTodo) {
-    //console.log('updating')
-    let headers = new Headers();
-    headers.append('Content-type', 'application/json');
-    headers.append('x-auth', localStorage.getItem('x-auth'));
-    try {
-      let todo = await this._http
-        .post(`routes/updatetodos/${newTodo._id}`, JSON.stringify(newTodo), {
-          headers: headers
-        })
-        .toPromise();
-      return todo.json();
-    } catch (error) {
-      return null;
-    }
-  }
-
-  async deleteTodo(todo, user) {
-    //console.log(todo)
-    let headers = new Headers();
-    headers.append('Content-type', 'application/json');
-    headers.append('x-auth', localStorage.getItem('x-auth'));
-    try {
-      let result = await this._http
-        .post(
-          `routes/deletetodos/${todo._id}`,
-          JSON.stringify({ user, todo }),
-          { headers }
-        )
-        .toPromise();
-      return result.json();
-    } catch (error) {
-      return null;
-    }
-  }
-
-  async logout(user) {
-    let headers = new Headers();
-    headers.append('Content-type', 'application/json');
-    headers.append('x-auth', localStorage.getItem('x-auth'));
-    await this._http
-      .post(`routes/users/delete/token`, JSON.stringify(user), { headers })
-      .toPromise();
-    localStorage.removeItem('x-auth');
-    localStorage.removeItem('_id');
-    localStorage.removeItem('email');
-    return;
+      );
   }
 }
