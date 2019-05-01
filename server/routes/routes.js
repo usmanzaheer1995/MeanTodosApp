@@ -7,12 +7,12 @@ const { ObjectID } = require("mongodb");
 const _ = require("lodash");
 var { URL } = require("url");
 
-var { mongoose } = require("./../db/mongoose");
+require("./../db/mongoose");
 var { Users } = require("./../models/Users");
 var { Todo } = require("./../models/Todo");
 var { authenticate } = require("./../middleware/authenticate");
 
-var db = mongojs(process.env.MONGODB_URI, ["todos"]);
+// var db = mongojs(process.env.MONGODB_URI, ["todos"]);
 
 router.get("/", (req, res) => {
   res.send("api works");

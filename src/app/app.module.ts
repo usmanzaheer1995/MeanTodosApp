@@ -29,7 +29,7 @@ import { AsyncValidator } from "./components/signup/usernameValidator";
     AsyncValidator
   ],
   imports: [
-    BrowserModule,
+    BrowserModule.withServerTransition({ appId: 'serverApp' }),
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
